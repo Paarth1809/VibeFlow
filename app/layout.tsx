@@ -18,9 +18,9 @@ export default function RootLayout({
     <html lang="en">
       <body className="bg-background text-foreground font-sans antialiased">
         <Providers>
-          <div className="min-h-screen bg-background text-foreground pt-16">
+          <div className="min-h-screen bg-background text-foreground pt-24">
             <Topbar />
-            <main className="pb-24">
+            <main className="pb-28 px-4">
               {children}
             </main>
             <AudioPlayer />

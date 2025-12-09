@@ -20,14 +20,24 @@ import {
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 
 export const Topbar = () => {
     const pathname = usePathname();
     const [searchOpen, setSearchOpen] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
 
-    // Discovery Content - Public/Browse
+    // Detect scroll for floating effect
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 20);
+        };
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    // Discovery Content
     const discoverNav = [
         { icon: <Home size={18} />, label: "Home", href: "/" },
         { icon: <Compass size={18} />, label: "Discover", href: "/discover" },
@@ -39,7 +49,7 @@ export const Topbar = () => {
         { icon: <Sparkles size={18} />, label: "Moods", href: "/moods" },
     ];
 
-    // Personal Library - User's Content
+    // Personal Library
     const libraryNav = [
         { icon: <Heart size={18} />, label: "Favorites", href: "/favorites" },
         { icon: <Clock size={18} />, label: "Recent", href: "/recent" },
@@ -52,119 +62,135 @@ export const Topbar = () => {
     };
 
     return (
-        <nav className="fixed top-0 left-0 right-0 h-16 bg-background/80 backdrop-blur-xl border-b border-border z-50">
-            <div className="h-full px-6 flex items-center justify-between gap-6">
-                {/* Logo */}
-                <Link href="/" className="flex items-center gap-2 shrink-0">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/50 flex items-center justify-center">
-                        <Sparkles className="w-4 h-4 text-primary-foreground" />
-                    </div>
-                    <h1 className="font-display text-xl font-bold tracking-tight hidden sm:block">
-                        <span className="text-gradient">Vibe</span>
-                        <span className="text-foreground">Nest</span>
-                    </h1>
-                </Link>
-
-                {/* Main Navigation */}
-                <div className="flex-1 flex items-center gap-4 overflow-x-auto scrollbar-hide">
-                    {/* Discover Section */}
-                    <div className="flex items-center gap-1">
-                        {discoverNav.map((item) => (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                className={cn(
-                                    "flex items-center gap-2 px-3 py-1.5 rounded-full font-medium text-sm transition-all whitespace-nowrap relative",
-                                    isActive(item.href)
-                                        ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
-                                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                                )}
-                            >
-                                <span className={cn(
-                                    "transition-transform",
-                                    isActive(item.href) && "scale-110"
-                                )}>
-                                    {item.icon}
-                                </span>
-                                <span className="hidden lg:inline">{item.label}</span>
-                                {item.badge && (
-                                    <span className="hidden xl:inline text-[10px] px-1.5 py-0.5 rounded-full bg-primary/20 text-primary">
-                                        {item.badge}
-                                    </span>
-                                )}
-                            </Link>
-                        ))}
-                    </div>
-
-                    {/* Separator */}
-                    <div className="h-8 w-px bg-border" />
-
-                    {/* Library Section */}
-                    <div className="flex items-center gap-1">
-                        <div className="flex items-center gap-1.5 px-2 text-xs text-muted-foreground font-medium hidden xl:flex">
-                            <Library size={14} />
-                            <span>MY LIBRARY</span>
+        <nav className={cn(
+            "fixed top-4 left-4 right-4 z-50 transition-all duration-500 ease-out animate-slide-in-left",
+            scrolled
+                ? "top-2 shadow-2xl shadow-black/20"
+                : "shadow-xl shadow-black/10"
+        )}>
+            <div className={cn(
+                "rounded-2xl border border-border/50 transition-all duration-500",
+                scrolled
+                    ? "bg-background/60 backdrop-blur-3xl"
+                    : "bg-background/80 backdrop-blur-xl"
+            )}>
+                <div className={cn(
+                    "h-full px-6 flex items-center justify-between gap-6 transition-all duration-300",
+                    scrolled ? "py-2" : "py-3"
+                )}>
+                    {/* Logo */}
+                    <Link href="/" className="flex items-center gap-2 shrink-0 group">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                            <Sparkles className="w-4 h-4 text-primary-foreground" />
                         </div>
-                        {libraryNav.map((item) => (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                className={cn(
-                                    "flex items-center gap-2 px-3 py-1.5 rounded-full font-medium text-sm transition-all whitespace-nowrap",
-                                    isActive(item.href)
-                                        ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
-                                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                                )}
-                            >
-                                <span className={cn(
-                                    "transition-transform",
-                                    isActive(item.href) && "scale-110"
-                                )}>
-                                    {item.icon}
-                                </span>
-                                <span className="hidden lg:inline">{item.label}</span>
-                            </Link>
-                        ))}
-                    </div>
-                </div>
+                        <h1 className="font-display text-xl font-bold tracking-tight hidden sm:block">
+                            <span className="text-gradient">Vibe</span>
+                            <span className="text-foreground">Nest</span>
+                        </h1>
+                    </Link>
 
-                {/* Right Actions */}
-                <div className="flex items-center gap-2 shrink-0">
-                    {/* Search */}
-                    <div className={cn(
-                        "relative transition-all duration-300",
-                        searchOpen ? "w-64" : "w-10"
-                    )}>
-                        {searchOpen ? (
-                            <div className="relative">
-                                <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                                <Input
-                                    placeholder="Search..."
-                                    className="pl-9 h-10 bg-muted border-0"
-                                    autoFocus
-                                    onBlur={() => setSearchOpen(false)}
-                                />
+                    {/* Main Navigation */}
+                    <div className="flex-1 flex items-center gap-4 overflow-x-auto scrollbar-hide">
+                        {/* Discover Section */}
+                        <div className="flex items-center gap-1">
+                            {discoverNav.map((item, index) => (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    className={cn(
+                                        "flex items-center gap-2 px-3 py-1.5 rounded-full font-medium text-sm transition-all whitespace-nowrap relative animate-fade-in",
+                                        `stagger-${Math.min(index + 1, 5)}`,
+                                        isActive(item.href)
+                                            ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-105"
+                                            : "text-muted-foreground hover:text-foreground hover:bg-muted hover:scale-105"
+                                    )}
+                                >
+                                    <span className={cn(
+                                        "transition-transform duration-300",
+                                        isActive(item.href) && "scale-110"
+                                    )}>
+                                        {item.icon}
+                                    </span>
+                                    <span className="hidden lg:inline">{item.label}</span>
+                                    {item.badge && (
+                                        <span className="hidden xl:inline text-[10px] px-1.5 py-0.5 rounded-full bg-primary/20 text-primary animate-pulse">
+                                            {item.badge}
+                                        </span>
+                                    )}
+                                </Link>
+                            ))}
+                        </div>
+
+                        {/* Separator */}
+                        <div className="h-8 w-px bg-gradient-to-b from-transparent via-border to-transparent" />
+
+                        {/* Library Section */}
+                        <div className="flex items-center gap-1">
+                            <div className="flex items-center gap-1.5 px-2 text-xs text-muted-foreground font-medium hidden xl:flex">
+                                <Library size={14} />
+                                <span>MY LIBRARY</span>
                             </div>
-                        ) : (
-                            <button
-                                onClick={() => setSearchOpen(true)}
-                                className="w-10 h-10 rounded-full hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
-                            >
-                                <Search size={18} />
-                            </button>
-                        )}
+                            {libraryNav.map((item) => (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    className={cn(
+                                        "flex items-center gap-2 px-3 py-1.5 rounded-full font-medium text-sm transition-all whitespace-nowrap",
+                                        isActive(item.href)
+                                            ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-105"
+                                            : "text-muted-foreground hover:text-foreground hover:bg-muted hover:scale-105"
+                                    )}
+                                >
+                                    <span className={cn(
+                                        "transition-transform duration-300",
+                                        isActive(item.href) && "scale-110"
+                                    )}>
+                                        {item.icon}
+                                    </span>
+                                    <span className="hidden lg:inline">{item.label}</span>
+                                </Link>
+                            ))}
+                        </div>
                     </div>
 
-                    {/* Notifications */}
-                    <button className="w-10 h-10 rounded-full hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors relative">
-                        <Bell size={18} />
-                        <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full" />
-                    </button>
+                    {/* Right Actions */}
+                    <div className="flex items-center gap-2 shrink-0">
+                        {/* Search */}
+                        <div className={cn(
+                            "relative transition-all duration-300",
+                            searchOpen ? "w-64" : "w-10"
+                        )}>
+                            {searchOpen ? (
+                                <div className="relative animate-scale-in">
+                                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                                    <Input
+                                        placeholder="Search..."
+                                        className="pl-9 h-10 bg-muted border-0"
+                                        autoFocus
+                                        onBlur={() => setSearchOpen(false)}
+                                    />
+                                </div>
+                            ) : (
+                                <button
+                                    onClick={() => setSearchOpen(true)}
+                                    className="w-10 h-10 rounded-full hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-all hover:scale-110"
+                                >
+                                    <Search size={18} />
+                                </button>
+                            )}
+                        </div>
 
-                    {/* Profile */}
-                    <button className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center text-white hover:scale-105 transition-transform">
-                        <User size={18} />
-                    </button>
+                        {/* Notifications */}
+                        <button className="w-10 h-10 rounded-full hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-all hover:scale-110 relative">
+                            <Bell size={18} />
+                            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full animate-pulse" />
+                        </button>
+
+                        {/* Profile */}
+                        <button className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center text-white hover:scale-110 transition-transform shadow-lg hover:shadow-xl">
+                            <User size={18} />
+                        </button>
+                    </div>
                 </div>
             </div>
         </nav>
