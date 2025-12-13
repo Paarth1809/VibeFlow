@@ -1,173 +1,90 @@
 "use client";
-import {
-  Home,
-  Compass,
-  Music2,
-  Headphones,
-  BookOpen,
-  Mic2,
-  ImageIcon,
-  Sparkles,
-  Cloud,
-  Heart,
-  Clock,
-  Settings,
-  ChevronLeft,
-  ChevronRight
-} from "lucide-react";
+import { Home, Search, Library, Plus, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
 
 interface NavItemProps {
   icon: React.ReactNode;
   label: string;
   active?: boolean;
   href: string;
-  badge?: string;
-  onClick?: () => void;
 }
 
-const NavItem = ({ icon, label, active, href, badge }: NavItemProps) => (
+const NavItem = ({ icon, label, active, href }: NavItemProps) => (
   <Link
     href={href}
     className={cn(
-      "nav-link w-full group",
-      active && "nav-link-active"
+      "flex items-center gap-4 px-4 py-3 transition-colors font-bold text-base",
+      active ? "text-white" : "text-neutral-400 hover:text-white"
     )}
   >
-    <span className={cn(
-      "w-5 h-5 transition-colors",
-      active ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
-    )}>
-      {icon}
-    </span>
-    <span className="flex-1 text-left">{label}</span>
-    {badge && (
-      <span className="bg-primary/20 text-primary text-xs font-medium px-2 py-0.5 rounded-full">
-        {badge}
-      </span>
-    )}
+    {icon}
+    <span>{label}</span>
   </Link>
 );
 
-// ... prior imports
-
-// ... other Code
-const SectionTitle = ({ children }: { children: React.ReactNode }) => (
-  <h3 className="section-title px-4 mb-2">{children}</h3>
-);
-
 export const Sidebar = () => {
-  const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
 
-  const mainNav = [
-    { icon: <Home size={18} />, label: "Home", href: "/" },
-    { icon: <Compass size={18} />, label: "Discover", href: "/discover" },
-    { icon: <Sparkles size={18} />, label: "Moods", badge: "New", href: "/moods" },
-  ];
-
-  const mediaNav = [
-    { icon: <Music2 size={18} />, label: "Music", href: "/music" },
-    { icon: <Cloud size={18} />, label: "Calm Sounds", href: "/calm-sounds" },
-    { icon: <Mic2 size={18} />, label: "Podcasts", href: "/podcasts" },
-    { icon: <BookOpen size={18} />, label: "Audiobooks", href: "/audiobooks" },
-    { icon: <ImageIcon size={18} />, label: "Moodboards", href: "/moodboards" },
-  ];
-
-  const libraryNav = [
-    { icon: <Heart size={18} />, label: "Favorites", href: "/favorites" },
-    { icon: <Clock size={18} />, label: "Recent", href: "/recent" },
-    { icon: <Headphones size={18} />, label: "My Playlists", href: "/playlists" },
-  ];
-
-  const isActive = (href: string) => {
-    if (href === "/" && pathname !== "/") return false;
-    return pathname.startsWith(href);
-  };
-
   return (
-    <aside className={cn(
-      "bg-sidebar border-r border-sidebar-border flex flex-col h-screen sticky top-0 transition-all duration-300",
-      collapsed ? "w-[72px]" : "w-64"
-    )}>
-      {/* Logo */}
-      <div className="p-4 flex items-center justify-between">
-        {!collapsed && (
-          <h1 className="font-display text-xl font-bold tracking-tight animate-fade-in">
-            <span className="text-gradient">Vibe</span>
-            <span className="text-foreground">Flow</span>
-          </h1>
-        )}
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="p-2 rounded-lg hover:bg-sidebar-accent text-muted-foreground hover:text-foreground transition-colors"
-        >
-          {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
-        </button>
-      </div>
-
-      {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto px-2 space-y-6 py-4">
-        {/* Main */}
-        <div className="space-y-1">
-          {mainNav.map((item) => (
-            <NavItem
-              key={item.label}
-              icon={item.icon}
-              label={collapsed ? "" : item.label}
-              badge={!collapsed ? item.badge : undefined}
-              href={item.href}
-              active={isActive(item.href)}
-            />
-          ))}
-        </div>
-
-        {/* Media */}
-        <div>
-          {!collapsed && <SectionTitle>Media</SectionTitle>}
-          <div className="space-y-1">
-            {mediaNav.map((item) => (
-              <NavItem
-                key={item.label}
-                icon={item.icon}
-                label={collapsed ? "" : item.label}
-                href={item.href}
-                active={isActive(item.href)}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Library */}
-        <div>
-          {!collapsed && <SectionTitle>Your Library</SectionTitle>}
-          <div className="space-y-1">
-            {libraryNav.map((item) => (
-              <NavItem
-                key={item.label}
-                icon={item.icon}
-                label={collapsed ? "" : item.label}
-                href={item.href}
-                active={isActive(item.href)}
-              />
-            ))}
-          </div>
-        </div>
-      </nav>
-
-      {/* Settings */}
-      <div className="p-2 border-t border-sidebar-border">
+    <div className="w-[280px] flex flex-col gap-2 h-full">
+      {/* Top Box: Nav */}
+      <div className="bg-[#121212] rounded-lg p-3 flex flex-col">
         <NavItem
-          icon={<Settings size={18} />}
-          label={collapsed ? "" : "Settings"}
-          href="/settings"
-          active={pathname === "/settings"}
+          icon={<Home size={24} />}
+          label="Home"
+          href="/"
+          active={pathname === "/"}
+        />
+        <NavItem
+          icon={<Search size={24} />}
+          label="Search"
+          href="/discover"
+          active={pathname === "/discover"}
         />
       </div>
-    </aside>
+
+      {/* Bottom Box: Library */}
+      <div className="bg-[#121212] rounded-lg flex-1 flex flex-col min-h-0">
+        <div className="p-4 flex items-center justify-between shadow-sm">
+          <button className="flex items-center gap-2 text-neutral-400 hover:text-white transition-colors font-bold">
+            <Library size={24} />
+            <span>Your Library</span>
+          </button>
+          <div className="flex items-center gap-2">
+            <button className="p-2 hover:bg-white/5 rounded-full text-neutral-400 hover:text-white">
+              <Plus size={20} />
+            </button>
+            <button className="p-2 hover:bg-white/5 rounded-full text-neutral-400 hover:text-white">
+              <ArrowRight size={20} />
+            </button>
+          </div>
+        </div>
+
+        {/* Mock Library Content */}
+        <div className="flex-1 overflow-y-auto custom-scrollbar px-2 pb-2">
+          <div className="space-y-2 mt-2">
+            {/* Filters */}
+            <div className="flex gap-2 px-2 mb-4 overflow-x-auto no-scrollbar">
+              <span className="bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full text-sm font-medium cursor-pointer whitespace-nowrap">Playlists</span>
+              <span className="bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full text-sm font-medium cursor-pointer whitespace-nowrap">Artists</span>
+              <span className="bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full text-sm font-medium cursor-pointer whitespace-nowrap">Podcasts</span>
+            </div>
+
+            {/* List */}
+            {[...Array(15)].map((_, i) => (
+              <div key={i} className="flex items-center gap-3 p-2 hover:bg-white/5 rounded-md cursor-pointer group">
+                <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-md shrink-0 opacity-80 group-hover:opacity-100" />
+                <div className="min-w-0">
+                  <h4 className="text-white font-medium truncate">My Vibes Playlist #{i + 1}</h4>
+                  <p className="text-neutral-400 text-sm truncate">Playlist • User</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
-

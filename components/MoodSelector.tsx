@@ -46,19 +46,19 @@ const MoodCard = ({ mood, emoji, gradient, description, delay = 0 }: MoodCardPro
   return (
     <div
       className={cn(
-        "mood-card group animate-fade-in-up",
+        "mood-card group animate-fade-in-up border border-white/5 hover:border-white/20 hover:shadow-2xl hover:shadow-primary/5",
         gradient
       )}
       style={{ animationDelay: `${delay}ms` }}
       onClick={handlePlayMood}
     >
-      <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
-      <div className="relative z-10">
-        <span className="text-4xl mb-3 block group-hover:scale-110 transition-transform duration-300">
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+      <div className="relative z-10 p-2">
+        <span className="text-5xl mb-4 block group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500 ease-out filter drop-shadow-lg">
           {emoji}
         </span>
-        <h3 className="font-display text-lg font-semibold text-foreground mb-1">{mood}</h3>
-        <p className="text-sm text-foreground/70">{description}</p>
+        <h3 className="font-display text-lg font-bold text-foreground mb-1 group-hover:text-primary transition-colors">{mood}</h3>
+        <p className="text-sm text-muted-foreground group-hover:text-foreground/80 transition-colors">{description}</p>
       </div>
     </div>
   );
@@ -74,12 +74,12 @@ export const MoodSelector = () => {
   ];
 
   return (
-    <section className="px-6 py-8">
-      <div className="flex items-center gap-3 mb-6">
+    <section className="px-6 pt-6 pb-2">
+      <div className="flex items-center gap-3 mb-4">
         <Sparkles className="w-5 h-5 text-primary" />
         <h2 className="font-display text-xl font-bold text-foreground">How are you feeling?</h2>
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {moods.map((mood, index) => (
           <MoodCard key={mood.mood} {...mood} delay={index * 100} />
         ))}

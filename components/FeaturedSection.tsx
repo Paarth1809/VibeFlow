@@ -153,16 +153,16 @@ export const FeaturedSection = () => {
   return (
     <>
       <Section
-        title="Recently Played"
-        icon={<Music2 className="w-5 h-5 text-primary" />}
-        items={recentlyPlayed}
-        isLoading={recentLoading}
-      />
-      <Section
         title="Made For You"
         icon={<Sparkles className="w-5 h-5 text-primary" />}
         items={forYou}
         isLoading={forYouLoading}
+      />
+      <Section
+        title="Recently Played"
+        icon={<Music2 className="w-5 h-5 text-primary" />}
+        items={recentlyPlayed}
+        isLoading={recentLoading}
       />
       <Section
         title="Popular Audiobooks"
